@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<PageManager>
+	<Page Name="All Data Pages" PageGUID="A3AE4D7E-0AC4-449A-A437-7A3FF1608B3A">
+		<Page Name="[Data Page] P_Demanda" PageGUID="60633B34-53EF-41CC-AEAB-7E0AB1D3BD32" />
+		<Page Name="[Data Page] P_Retail" PageGUID="AC3F9ED3-2968-4537-B5FE-B6021F4F92C8" />
+		<Page Name="[Data Page] P_Preco_Venda_SKU" PageGUID="21514210-8800-4A28-9E94-3020B31F4160" />
+		<Page Name="[Data Page] P_Custo_SKU" PageGUID="ECA5274E-59AE-46C6-A58B-585BC9974FA8" />
+	</Page>
+</PageManager>

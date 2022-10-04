@@ -1,0 +1,326 @@
+{
+  "version": "4.67.0",
+  "application": {
+    "aimms.widget.type": {
+      "literal": "application"
+    },
+    "browsername": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserName"
+        ]
+      }
+    },
+    "browsertimezone": {
+      "aimms": {
+        "contents": [
+          "webui::BrowserTimeZone"
+        ]
+      }
+    },
+    "ignoredst": {
+      "aimms": {
+        "contents": [
+          "webui::IgnoreDST"
+        ]
+      }
+    },
+    "pages": {
+      "literal": {
+        "name": "root",
+        "slug": "root",
+        "children": [
+          {
+            "name": "Main Project",
+            "slug": "main_project",
+            "children": [
+              {
+                "name": "Solução",
+                "slug": "home",
+                "type": "pagev2-grid",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "theme.classic": {
+      "literal": "NOT_ALLOWED"
+    },
+    "timezone": {
+      "aimms": {
+        "contents": [
+          "webui::DisplayTimeZone"
+        ]
+      }
+    },
+    "timezone.dst.readonly": {
+      "aimms": {
+        "contents": [
+          "webui::DefaultDSTSettingForDisplayTimeZone"
+        ]
+      }
+    }
+  },
+  "pages/home": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "KPI's",
+          "gridArea": "area-d",
+          "dndId": "Unassigned widgetsKPI's3"
+        },
+        {
+          "widgetUri": "Quantidade Rejeitos",
+          "gridArea": "area-c",
+          "dndId": "area-cQuantidade Rejeitos0"
+        },
+        {
+          "widgetUri": "Quantidade Produzida",
+          "gridArea": "area-b",
+          "dndId": "area-bQuantidade Produzida1"
+        },
+        {
+          "widgetUri": "Quantidade em Estoque",
+          "gridArea": "area-a",
+          "dndId": "area-aQuantidade em Estoque2"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout5"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "Quantidade em Estoque",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "Quantidade Produzida",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "Quantidade Rejeitos",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "KPI's",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "widgets/KPI's": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "OBJ_Aglutinacao",
+          "OBJ_Custo_Estoque",
+          "OBJ_margem_Producao",
+          "OBJ_margem_Rejeito"
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "keys": [
+          "<IDENTIFIER-SET>"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "<IDENTIFIER-SET>",
+          "width": 27.32
+        }
+      ]
+    },
+    "name": {
+      "literal": "KPI's"
+    },
+    "title": {
+      "literal": "KPI's"
+    }
+  },
+  "widgets/Quantidade em Estoque": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "Quantidade_Estocada"
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "sku",
+          "mes"
+        ],
+        "colHeader": [
+          "estoque"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "colHeader",
+          "colKey": {
+            "estoque": "Fabrica"
+          },
+          "width": 14.37
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "estoque",
+          "width": 24.45
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "estoque": "Galpao"
+          },
+          "width": 18.87
+        }
+      ]
+    },
+    "name": {
+      "literal": "Quantidade em Estoque"
+    },
+    "title": {
+      "literal": "Nível de Estoque"
+    }
+  },
+  "widgets/Quantidade Produzida": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "Quantidade_Produzida"
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "sku",
+          "mes"
+        ],
+        "colHeader": [
+          "maquina"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "<IDENTIFIER-SET>",
+          "width": 15.2
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "maquina",
+          "width": 20.75
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "maquina": "6"
+          },
+          "width": 12.08
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "mes",
+          "width": 17.26
+        }
+      ]
+    },
+    "name": {
+      "literal": "Quantidade Produzida"
+    },
+    "title": {
+      "literal": "Quantidade Produzida Mensal"
+    }
+  },
+  "widgets/Quantidade Rejeitos": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "Quantidade_Venda_Rejeito"
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "customer"
+        ],
+        "colHeader": [
+          "mes"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "<IDENTIFIER-SET>",
+          "width": 24.26
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "customer",
+          "width": 19.72
+        }
+      ]
+    },
+    "name": {
+      "literal": "Quantidade Rejeitos"
+    },
+    "title": {
+      "literal": "Rejeitos Descartados"
+    }
+  }
+}

@@ -1,0 +1,206 @@
+## ams_version=1.0
+
+Model Main_desafio_cognitivoai {
+	DeclarationSection Conjuntos {
+		Set Customers {
+			Index: customer;
+		}
+		Set SKUS {
+			Index: sku;
+		}
+		Set Estoques {
+			Index: estoque;
+		}
+		Set Maquinario {
+			Index: maquina;
+		}
+		Set Meses {
+			Index: mes;
+		}
+	}
+	DeclarationSection Variaveis_de_Decisao {
+		Variable Quantidade_Estocada {
+			IndexDomain: (estoque,sku,mes);
+			Range: integer;
+		}
+		Variable Quantidade_Venda_Rejeito {
+			IndexDomain: (Customer,mes);
+			Range: nonnegative;
+		}
+		Variable Quantidade_Produzida {
+			IndexDomain: (maquina,sku,mes) | P_Matriz_Producao(maquina,sku);
+			Range: integer;
+		}
+	}
+	DeclarationSection Parametros_Tradicionais {
+		Parameter P_Demanda_Rejeito {
+			IndexDomain: (Customer,mes);
+		}
+		Parameter P_Rejeito_Producao {
+			IndexDomain: (maquina,sku);
+		}
+		Parameter P_Eficiencia_Maquinas {
+			IndexDomain: (maquina,sku);
+		}
+		Parameter P_Capac_Maquinas {
+			IndexDomain: (maquina,mes);
+		}
+		Parameter P_Retail {
+			IndexDomain: (sku,mes);
+		}
+		Parameter P_Demanda {
+			IndexDomain: (sku,mes);
+		}
+		Parameter P_Capac_Estoque {
+			IndexDomain: (estoque,mes);
+		}
+	}
+	DeclarationSection Parametros_Custo {
+		Parameter P_Custo_SKU {
+			IndexDomain: (sku,mes);
+		}
+		Parameter P_Preco_Venda_SKU {
+			IndexDomain: (sku,mes);
+		}
+		Parameter P_Custo_Rejeito {
+			IndexDomain: customer;
+		}
+		Parameter P_Preco_Venda_Rejeito {
+			IndexDomain: customer;
+		}
+		Parameter P_Custo_Estoque {
+			IndexDomain: estoque;
+		}
+	}
+	DeclarationSection Parametros_Corte_de_Dominio {
+		Parameter P_Matriz_Producao {
+			IndexDomain: (maquina, sku);
+			Range: binary;
+		}
+	}
+	DeclarationSection Modelo {
+		MathematicalProgram OBJ_Eval {
+			Objective: OBJ_Aglutinacao;
+			Direction: maximize;
+			Constraints: AllConstraints;
+			Variables: AllVariables;
+			Type: Automatic;
+		}
+		Variable OBJ_Aglutinacao {
+			Range: free;
+			Definition: OBJ_margem_Producao + OBJ_margem_Rejeito - OBJ_Custo_Estoque;
+		}
+		Variable OBJ_Custo_Estoque {
+			Range: free;
+			Definition: sum[(estoque, sku, mes)| val(mes)>0, Quantidade_Estocada(estoque, sku, mes)*P_Custo_Estoque(estoque)];
+		}
+		Variable OBJ_margem_Rejeito {
+			Range: nonnegative;
+			Definition: {
+				sum[ (customer, mes) | val(mes)>0, 
+				(P_Preco_Venda_Rejeito(customer) - P_Custo_Rejeito(customer))*Quantidade_Venda_Rejeito(customer, mes)]
+			}
+		}
+		Variable OBJ_margem_Producao {
+			Range: free;
+			Definition: {
+				sum[ (maquina, sku, mes) | P_Matriz_Producao(maquina, sku) and val(mes)>0, 
+				(P_Preco_Venda_SKU(sku,mes)-P_Custo_SKU(sku,mes))*Quantidade_Produzida(maquina, sku, mes)]
+			}
+		}
+	}
+	DeclarationSection Restricoes {
+		Constraint R_estoquezero_ultimomes {
+			IndexDomain: (estoque,sku,mes) | val(mes) = 4;
+			Definition: Quantidade_Estocada(estoque,sku,mes) = 0;
+		}
+		Constraint R_Capac_Estoque {
+			IndexDomain: (estoque, mes) | val(mes)>0;
+			Definition: sum[sku, Quantidade_Estocada(estoque, sku, mes)] <= P_Capac_Estoque(estoque, mes);
+		}
+		Constraint R_Balanceamento_Estoque {
+			IndexDomain: (sku, mes) | val(mes)>0;
+			Definition: {
+				sum[maquina | P_Matriz_Producao(maquina, sku), Quantidade_Produzida(maquina, sku,mes)] +
+				
+				sum[estoque, Quantidade_Estocada(estoque,sku, mes-1) - Quantidade_Estocada(estoque,sku, mes)] =
+				
+				P_demanda(sku, mes) + P_Retail(sku,mes)
+			}
+		}
+		Constraint R_Capac_Maquinas {
+			IndexDomain: (maquina,mes)| val(mes)>0;
+			Definition: {
+				sum[sku | P_Matriz_Producao(maquina, sku), Quantidade_Produzida(maquina, sku, mes)*1/P_Eficiencia_Maquinas(maquina, sku)]/60
+				
+				<= P_Capac_Maquinas(maquina, mes)
+			}
+		}
+		Constraint R_Venda_Rejeitos {
+			IndexDomain: mes | val(mes) > 0;
+			Definition: {
+				sum[(maquina, sku) | P_Matriz_Producao(maquina, sku), Quantidade_Produzida(maquina, sku, mes) * P_Rejeito_Producao(maquina, sku)] 
+				= 
+				sum[Customer, Quantidade_Venda_Rejeito(Customer, mes)]
+			}
+		}
+		Constraint R_Demanda_Rejeito {
+			IndexDomain: (Customer,mes) | val(mes) > 0;
+			Definition: Quantidade_Venda_Rejeito(customer, mes) <= P_Demanda_Rejeito(customer, mes);
+		}
+	}
+	DeclarationSection PosOtimizacao;
+	Procedure Proc_KPI;
+	Procedure MainInitialization {
+		Comment: "Add initialization statements here that do NOT require any library being initialized already.";
+	}
+	Procedure PostMainInitialization {
+		Comment: {
+			"Add initialization statements here that require that the libraries are already initialized properly,
+			or add statements that require the Data Management module to be initialized."
+		}
+	}
+	Procedure MainExecution {
+		Body: {
+			solve OBJ_Eval;
+		}
+	}
+	Procedure PreMainTermination {
+		Body: {
+			return DataManagementExit();
+		}
+		Comment: {
+			"Add termination statements here that require all libraries to be still alive.
+			Return 1 if you allow the termination sequence to continue.
+			Return 0 if you want to cancel the termination sequence."
+		}
+	}
+	Procedure MainTermination {
+		Body: {
+			return 1;
+		}
+		Comment: {
+			"Add termination statements here that do not require all libraries to be still alive.
+			Return 1 to allow the termination sequence to continue.
+			Return 0 if you want to cancel the termination sequence.
+			It is recommended to only use the procedure PreMainTermination to cancel the termination sequence and let this procedure always return 1."
+		}
+	}
+	Section Quantities_and_Units {
+		Comment: {
+			"This section contains all the units and quantities that are added automatically by AIMMS.
+			It is recommended to declare all your quantities here."
+		}
+		Quantity SI_Time_Duration {
+			BaseUnit: s;
+			Conversions: minute->s : #-># * 60;
+			Comment: {
+				"Expresses the value for the duration of periods.
+				
+				The unit s has been added automatically because it is a required unit for AimmsWebUI.
+				
+				The unit minute has been added automatically because it is a required unit for AimmsWebUI."
+			}
+		}
+	}
+}
